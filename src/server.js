@@ -4,7 +4,7 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import notFoundHandler from "/middlewares/notFoundHandler.js";
+import notFoundHandler from "middlewares/notFoundHandler.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 import authRouter from "./routes/auth.router.js";
