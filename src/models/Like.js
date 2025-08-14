@@ -1,4 +1,3 @@
-// src/models/Like.js
 import { Schema, model, Types } from "mongoose";
 
 const likeSchema = new Schema(
@@ -9,7 +8,6 @@ const likeSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-// один пользователь может лайкнуть пост только один раз
 likeSchema.index({ user: 1, post: 1 }, { unique: true });
 
 const Like = model("like", likeSchema);

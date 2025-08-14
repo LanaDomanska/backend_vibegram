@@ -22,10 +22,7 @@ export async function getPostLikes(postId) {
   return { likes };
 }
 
-/** соберёт для пачки постов:
- *  - Map counts: postId -> кол-во
- *  - Set liked: postId, которые лайкнул userId
- */
+
 export async function getLikesSummary(postIds, userId) {
   const ids = postIds.map((id) => new Types.ObjectId(id));
   const [countsAgg, myLikes] = await Promise.all([

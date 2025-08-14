@@ -27,7 +27,7 @@ const fileFilter = (req, file, cb) => {
 const uploadPostImage = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  limits: { fileSize: 10 * 1024 * 1024 }, 
 });
 
 export default uploadPostImage;

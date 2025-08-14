@@ -1,6 +1,5 @@
 import * as Yup from "yup";
 
-// 🔐 Универсальное поле логина: username или email
 const usernameOrEmailSchema = Yup.string()
   .required("Введите имя пользователя или email")
   .test(
@@ -14,17 +13,14 @@ const usernameOrEmailSchema = Yup.string()
     }
   );
 
-// 📧 Email
 const emailSchema = Yup.string()
   .email("Некорректный адрес электронной почты")
   .required("Email обязателен");
 
-// 🔐 Пароль
 const passwordSchema = Yup.string()
   .min(6, "Пароль должен быть не короче 6 символов")
   .required("Пароль обязателен");
 
-// 📝 Регистрация
 export const registerSchema = Yup.object({
   email: emailSchema,
   username: Yup.string()
@@ -38,18 +34,15 @@ export const registerSchema = Yup.object({
     .required("Подтвердите пароль"),
 });
 
-// 🔐 Логин
 export const loginSchema = Yup.object({
   usernameOrEmail: usernameOrEmailSchema,
   password: passwordSchema,
 });
 
-// 📩 Сброс по email
 export const resetPasswordSchema = Yup.object({
   email: emailSchema,
 });
 
-// 🔁 Новый пароль
 export const newPasswordSchema = Yup.object({
   token: Yup.string().required("Токен обязателен"),
   newPassword: passwordSchema,

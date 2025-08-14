@@ -14,7 +14,6 @@ export const followUser = async (req, res, next) => {
 
     const result = await followService(currentUserId, targetUserId);
 
-    // Если пользователь подписался на другого — отправить уведомление
     if (currentUserId !== targetUserId) {
       await createNotification({
         user: targetUserId,

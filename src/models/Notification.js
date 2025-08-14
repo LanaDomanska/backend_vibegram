@@ -1,4 +1,3 @@
-// src/models/Notification.js
 import { Schema, model, Types } from "mongoose";
 
 const notificationSchema = new Schema({
@@ -10,8 +9,8 @@ const notificationSchema = new Schema({
   },
   fromUser: { type: Types.ObjectId, ref: "user", required: true },
   post: { type: Types.ObjectId, ref: "post" },
-  read: { type: Boolean, default: false },     // можно оставить
-  readAt: { type: Date },                      // ← используем на фронте
+  read: { type: Boolean, default: false },    
+  readAt: { type: Date },                      
 }, { timestamps: true, versionKey: false });
 
 export default model("notification", notificationSchema);

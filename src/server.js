@@ -4,7 +4,7 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import notFoundHandler from "./middlewares/notFoundHandler.js";
+import notFoundHandler from "./src/middlewares/notFoundHandler.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 import authRouter from "./routes/auth.router.js";
@@ -89,7 +89,7 @@ const startServer = () => {
 
   const PORT = process.env.PORT || 5000;
   const server = app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
   });
 
   return server;

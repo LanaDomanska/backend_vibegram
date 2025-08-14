@@ -1,4 +1,3 @@
-// src/controllers/auth.controller.js
 import * as authService from "../services/auth.service.js";
 import jwt from "jsonwebtoken";
 import HttpException from "../utils/HttpException.js";
@@ -8,7 +7,7 @@ const { JWT_SECRET } = process.env;
 const COOKIE_OPTS = {
   httpOnly: true,
   sameSite: "lax",
-  secure: false, // в проде лучше true + https
+  secure: false, 
   path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
@@ -24,7 +23,7 @@ const toSafeUser = (u) => ({
   role: u.role,
 });
 
-// ---------- CONTROLLERS ----------
+
 
 export const register = async (req, res, next) => {
   try {
@@ -54,7 +53,7 @@ export const login = async (req, res, next) => {
     res.cookie("token", token, COOKIE_OPTS);
     return res.status(201).json({ user: toSafeUser(user), token });
   } catch (err) {
-    console.error("❌ Ошибка в login:", err);
+    console.error("Error login:", err);
     return next(HttpException(err.status || 500, err.message || "Ошибка при входе"));
   }
 };
@@ -78,11 +77,7 @@ export const logout = async (req, res, next) => {
   }
 };
 
-/**
- * POST /api/auth/reset-request
- * Принимает: { emailOrUsername } ИЛИ { email } ИЛИ { username }
- * Ищет пользователя по email/username, генерирует reset token и отдаёт 200.
- */
+
 export const requestPasswordReset = async (req, res, next) => {
   try {
     const { email, username, emailOrUsername } = req.body;
@@ -91,14 +86,12 @@ export const requestPasswordReset = async (req, res, next) => {
 
     const ident = raw.toLowerCase();
 
-    // Ищем по email или username (без изменения твоей сервисной структуры)
     let user = null;
     if (ident.includes("@")) {
       user = await authService.findUserByEmail(ident);
     } else if (typeof authService.findUserByUsername === "function") {
       user = await authService.findUserByUsername(ident);
     } else if (typeof authService.findUser === "function") {
-      // Если есть универсальный метод
       user = await authService.findUser({ username: ident });
     }
 
@@ -112,17 +105,13 @@ export const requestPasswordReset = async (req, res, next) => {
       console.log("DEV reset URL:", url);
     }
 
-    // Можно не возвращать сам токен в проде; для дев-режима удобно оставить
     return res.json({ message: "Reset link sent successfully.", resetToken: token });
   } catch (err) {
     return next(HttpException(err.status || 500, err.message || "Ошибка при запросе сброса пароля"));
   }
 };
 
-/**
- * POST /api/auth/reset-password
- * Принимает: { token, password } ИЛИ { token, newPassword }
- */
+
 export const resetPassword = async (req, res, next) => {
   try {
     const { token } = req.body;
@@ -136,7 +125,6 @@ export const resetPassword = async (req, res, next) => {
   }
 };
 
-// ЯВНОЕ перечисление экспортов (чтобы ESM не путался)
 export {
   register as _register,
   login as _login,

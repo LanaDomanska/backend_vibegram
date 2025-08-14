@@ -4,7 +4,6 @@ import fs from "fs";
 
 const avatarsDir = path.resolve("public", "avatars");
 
-// Убедиться, что папка существует
 if (!fs.existsSync(avatarsDir)) {
   fs.mkdirSync(avatarsDir, { recursive: true });
 }
@@ -28,7 +27,7 @@ const fileFilter = (req, file, cb) => {
 
 const uploadAvatar = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  limits: { fileSize: 5 * 1024 * 1024 }, 
   fileFilter,
 });
 
