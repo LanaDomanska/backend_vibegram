@@ -3,6 +3,8 @@ import cors from "cors";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+import cookieParser from "cookie-parser";
+import mime from "mime";
 
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 import errorHandler from "./middlewares/errorHandler.js";
@@ -18,8 +20,6 @@ import messagesRouter from "./routes/messages.router.js";
 import notificationsRouter from "./routes/notifications.router.js";
 import followsRouter from "./routes/follows.router.js";
 import exploreRouter from "./routes/explore.router.js";
-import mime from "mime";
-import cookieParser from "cookie-parser";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,24 +27,20 @@ const __dirname = path.dirname(__filename);
 const startServer = () => {
   const app = express();
 
-  
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://frontend-vibegram-git-main-lana-domanskas-projects.vercel.app",
-  "https://frontend-vibegram.vercel.app"
-];
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "https://frontend-vibegram-git-main-lana-domanskas-projects.vercel.app",
+    "https://frontend-vibegram.vercel.app"
+  ];
 
-app.use(cors({
-  origin: function(origin, callback){
-    if (!origin) return callback(null, true); // для Postman или SSR
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
+  app.use(cors({
+    origin: function(origin, callback){
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
+    },
+    credentials: true
+  }));
 
   app.use(express.json());
   app.use(morgan("dev"));
@@ -54,32 +50,29 @@ app.use(cors({
     return mime.getType(filePath) || "application/octet-stream";
   }
 
-
   app.use(
     "/public",
     express.static(path.join(__dirname, "../public"), {
-      setHeaders: (res, filePath) => {
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
-        res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+      setHeaders: (res, filePath, req) => {
+        res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+        res.setHeader("Content-Type", getMimeType(filePath));
+      },
+    })
+  );
+
+  app.use(
+    "/avatars",
+    express.static(path.join(__dirname, "../public/avatars"), {
+      setHeaders: (res, filePath, req) => {
+        res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+        res.setHeader("Access-Control-Allow-Credentials", "true");
         res.setHeader("Content-Type", getMimeType(filePath));
       },
     })
   );
 
   app.use("/posts", express.static(path.join(__dirname, "../public/posts")));
-
-  app.use(
-    "/avatars",
-    express.static(path.join(__dirname, "../public/avatars"), {
-      setHeaders: (res, filePath) => {
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
-        res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-        res.setHeader("Content-Type", getMimeType(filePath));
-      },
-    })
-  );
 
   app.use("/api/auth", authRouter);
   app.use("/api/users", usersRouter);
