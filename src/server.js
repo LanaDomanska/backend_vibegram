@@ -27,9 +27,8 @@ const __dirname = path.dirname(__filename);
 const startServer = () => {
   const app = express();
 
-  // CORS: разрешаем localhost и все поддомены vercel.app
   app.use(cors({
-    origin: function(origin, callback){
+    origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       if (origin.includes("vercel.app") || origin.includes("localhost")) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
@@ -45,11 +44,12 @@ const startServer = () => {
     return mime.getType(filePath) || "application/octet-stream";
   }
 
-  // Статика с CORS
+  // Статика с безопасным CORS
   const staticWithCors = (urlPath, folderPath) => {
     app.use(urlPath, express.static(folderPath, {
       setHeaders: (res, filePath, req) => {
-        res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+        const origin = req?.headers?.origin || "*"; 
+        res.setHeader("Access-Control-Allow-Origin", origin);
         res.setHeader("Access-Control-Allow-Credentials", "true");
         res.setHeader("Content-Type", getMimeType(filePath));
       },
@@ -60,7 +60,6 @@ const startServer = () => {
   staticWithCors("/avatars", path.join(__dirname, "../public/avatars"));
   staticWithCors("/posts", path.join(__dirname, "../public/posts"));
 
-  // API роуты
   app.use("/api/auth", authRouter);
   app.use("/api/users", usersRouter);
   app.use("/api/posts", postsRouter);
@@ -73,7 +72,6 @@ const startServer = () => {
   app.use("/api/follows", followsRouter);
   app.use("/api/explore", exploreRouter);
 
-  // Ошибки
   app.use(notFoundHandler);
   app.use(errorHandler);
 
