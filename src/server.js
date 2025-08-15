@@ -27,15 +27,24 @@ const __dirname = path.dirname(__filename);
 const startServer = () => {
   const app = express();
 
-  // CORS
-  app.use(
-    cors({
-      origin: "http://localhost:5173",
-      credentials: true,
-      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "Pragma", "Expires"],
-    })
-  );
+  
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://frontend-vibegram-git-main-lana-domanskas-projects.vercel.app",
+  "https://frontend-vibegram.vercel.app"
+];
+
+app.use(cors({
+  origin: function(origin, callback){
+    if (!origin) return callback(null, true); // для Postman или SSR
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
   app.use(express.json());
   app.use(morgan("dev"));
